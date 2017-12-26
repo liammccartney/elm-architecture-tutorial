@@ -27,6 +27,13 @@ model =
   Model ""
 
 
+palindrome: String -> Bool
+palindrome word =
+   not (String.isEmpty word) &&
+   String.length word > 1 &&
+   word == String.reverse word
+
+
 
 -- UPDATE
 
@@ -48,6 +55,16 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ input [ placeholder "Text to reverse", onInput Change ] []
-    , div [] [ text (String.reverse model.content) ]
+    [ input [ placeholder "Text to reverse", onInput Change, myStyle ] []
+    , div [ myStyle ] [ text (String.reverse model.content) ]
+    , div [ hidden (not (palindrome model.content)), myStyle ] [ text "Palindrome!"]
     ]
+
+myStyle =
+    style
+        [ ("width", "100%")
+        , ("height", "40px")
+        , ("padding", "10px 0")
+        , ("font-size", "2em")
+        , ("text-align", "center")
+        ]
