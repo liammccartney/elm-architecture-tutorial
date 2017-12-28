@@ -64,8 +64,11 @@ view model =
     ]
 
 
-viewInput inputType placeholderText onInputMsg =
-    input [ type_ inputType, placeholder placeholderText, onInput onInputMsg ] []
+viewInput inputType labelText onInputMsg =
+    div []
+      [ span [] [ text (labelText ++ " ") ]
+      , input [ type_ inputType, placeholder "", onInput onInputMsg ] []
+      ]
 
 viewValidation : Model -> Html msg
 viewValidation model =
