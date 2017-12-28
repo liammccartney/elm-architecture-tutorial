@@ -57,12 +57,15 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ input [ type_ "text", placeholder "Name", onInput Name ] []
-    , input [ type_ "password", placeholder "Password", onInput Password ] []
-    , input [ type_ "password", placeholder "Re-enter Password", onInput PasswordAgain ] []
+    [ viewInput "text" "Name" Name
+    , viewInput "password" "Password" Password
+    , viewInput "password" "Re-enter Password" PasswordAgain
     , viewValidation model
     ]
 
+
+viewInput inputType placeholderText onInputMsg =
+    input [ type_ inputType, placeholder placeholderText, onInput onInputMsg ] []
 
 viewValidation : Model -> Html msg
 viewValidation model =
