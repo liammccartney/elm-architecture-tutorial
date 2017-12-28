@@ -1,3 +1,5 @@
+import Regex exposing (..)
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
@@ -77,6 +79,10 @@ viewValidation model =
       if not (String.isEmpty model.password) &&
          String.length model.password < 8 then
         ("red", "Password too short")
+      else if not (Regex.contains (regex "[A-Z]") model.password &&
+                   Regex.contains (regex "[a-z]") model.password &&
+                   Regex.contains (regex "\\d") model.password) then
+        ("red", "Password requirements not met")
       else if model.password == model.passwordAgain then
         ("green", "OK")
       else
