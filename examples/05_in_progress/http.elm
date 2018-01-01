@@ -1,7 +1,7 @@
 import Http
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Json.Decode as Decode
 
 
@@ -31,6 +31,7 @@ init =
 -- UPDATE
 type Msg
     = MorePlease
+    | SetTopic String
     | NewGif (Result Http.Error String)
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -38,6 +39,9 @@ update msg model =
     case msg of
         MorePlease ->
             (model, getRandomGif model.topic)
+
+        SetTopic newTopic ->
+            ({model | topic = newTopic}, Cmd.none)
 
         NewGif (Ok newUrl) ->
             ( { model | errorMsg = "", gifUrl = newUrl }, Cmd.none)
@@ -72,6 +76,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ h2 [] [text model.topic]
+        , input [onInput SetTopic] [text model.topic]
         , button [onClick MorePlease] [text "More Please!"]
         , viewError model
         , br [] []
