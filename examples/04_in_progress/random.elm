@@ -1,4 +1,5 @@
 import Random
+import Task
 import Html exposing (..)
 import Html.Events exposing (onClick)
 
@@ -11,22 +12,34 @@ main =
     }
 
 type alias Model =
-    { dieFace : Int
+    { dieFace1 : Int
+    , dieFace2 : Int
     }
 
 type Msg
-    = Roll
-    | NewFace Int
+    = BatchRoll
+    | Roll Int
+    | NewFace Int Int
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        Roll ->
-            (model, Random.generate NewFace (Random.int 1 6))
+        BatchRoll ->
+            (model, Cmd.batch [Task.perform Roll (Task.succeed 1)
+                              , Task.perform Roll (Task.succeed 2)])
 
-        NewFace newFace ->
-            (Model newFace, Cmd.none)
+        Roll face ->
+            (model, Random.generate (NewFace face) (Random.int 1 6))
+
+        NewFace face newFaceVal ->
+            case face of
+                1 ->
+                    ({model | dieFace1 = newFaceVal}, Cmd.none)
+                2 ->
+                    ({model | dieFace2 = newFaceVal}, Cmd.none)
+                _ ->
+                    (model, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -35,10 +48,11 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div []
-    [ h1 [] [ text (toString model.dieFace) ]
-    , button [ onClick Roll ] [ text "Roll" ]
+    [ h1 [] [ text (toString model.dieFace1) ]
+    , h1 [] [ text (toString model.dieFace2) ]
+    , button [ onClick BatchRoll ] [ text "Roll" ]
     ]
 
 init : (Model, Cmd Msg)
 init =
-    (Model 1, Cmd.none)
+    (Model 1 1, Cmd.none)
