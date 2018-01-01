@@ -17,12 +17,15 @@ main =
 type alias Model =
     { topic : String
     , gifUrl : String
+    , errorMsg : String
     }
 
 
 init : (Model, Cmd Msg)
 init =
-    (Model "cats" "", getRandomGif "cats")
+    ( Model "cats" "" ""
+    , getRandomGif "cats"
+    )
 
 
 -- UPDATE
@@ -37,10 +40,10 @@ update msg model =
             (model, getRandomGif model.topic)
 
         NewGif (Ok newUrl) ->
-            ( { model | gifUrl = newUrl }, Cmd.none)
+            ( { model | errorMsg = "", gifUrl = newUrl }, Cmd.none)
 
         NewGif (Err _) ->
-            (model, Cmd.none)
+            ({model | errorMsg = "Wifi broke"}, Cmd.none)
 
 
 getRandomGif : String -> Cmd Msg
@@ -70,9 +73,18 @@ view model =
     div []
         [ h2 [] [text model.topic]
         , button [onClick MorePlease] [text "More Please!"]
+        , viewError model
         , br [] []
         , img [src model.gifUrl] []
         ]
+
+viewError : Model -> Html Msg
+viewError model =
+    if not (String.isEmpty model.errorMsg) then
+        div [ style [("color", "red")]] [ text model.errorMsg ]
+    else
+        div [] []
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
